@@ -1,0 +1,9 @@
+gpu-temp.778be0ed
+x64
+out
+build
+.vs
+imgui.ini
+gpu-temperature-guard.vcxproj
+gpu-temperature-guard.vcxproj.filters
+gpu-temperature-guard.vcxproj.user
