@@ -3,9 +3,27 @@
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_glfw.h"
 #include "GLFW/glfw3.h"
+#include "fonts/NotoSans-VariableFont_wdth,wght_font.h"
 #include <string>
 
 static GLFWwindow* window = nullptr;
+
+struct Configuration
+{
+    int max_value_temp;
+    std::string current_value_temp;
+    bool notification;
+    bool play_sound;
+    bool overlay;
+};
+
+struct Colors
+{
+    static const inline ImVec4 red = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+    static const inline ImVec4 white = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+};
+
+static Configuration config = {30, "- C", false, false, false};
 
 static void GLFWErrorCallback(int error, const char* description)
 {
@@ -23,10 +41,10 @@ void imguiMenu()
 
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-    window = glfwCreateWindow(2000, 1020, "ImGUI", nullptr, nullptr);
+    window = glfwCreateWindow(1000, 400, "ImGUI", nullptr, nullptr);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
-
+     
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
 
@@ -34,14 +52,26 @@ void imguiMenu()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls (optional)
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
+    ImFont* NotoSans_font = io.Fonts->AddFontFromMemoryTTF(
+        NotoSans_VariableFont_wdth_wght_ttf,    
+        NotoSans_VariableFont_wdth_wght_ttf_len,
+        32.0f
+    );
+
+    ImFont* font_big = io.Fonts->AddFontFromMemoryTTF(
+        NotoSans_VariableFont_wdth_wght_ttf,
+        NotoSans_VariableFont_wdth_wght_ttf_len,
+        250.f
+    );
+
     // Setup Platform/Renderer bindings
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
 
     ImGui::StyleColorsDark();
 
-    glfwSetWindowPos(window, -100, -100);
-    glfwSetWindowSize(window, 1, 1);
+    glfwSetWindowSize(window, 1000, 400);
+    glfwSetWindowPos(window, 100, 100);
 
     ImGuiStyle& style = ImGui::GetStyle();
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -65,9 +95,32 @@ void imguiMenu()
         screenWidth = mode->width;
         screenHeight = mode->height;
 
-        ImGui::SetNextWindowPos(ImVec2(screenWidth / 2.0f, screenHeight / 2.0f), ImGuiCond_FirstUseEver, ImVec2(0.5f, 0.5f));
+        ImGui::SetNextWindowSize(ImVec2(1000, 400), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
 
-        ImGui::Begin("GPU Temperature guard");
+        ImGui::Begin("GPU Temperature Guard");
+
+        ImGui::SetCursorPos(ImVec2(900, 380));
+        ImGui::PushItemWidth(280);
+        ImGui::SliderInt("Max temp", &config.max_value_temp, 30, 100);
+        ImGui::PopItemWidth();
+
+        ImGui::SetCursorPos(ImVec2(900, 430));
+        ImGui::Checkbox("Notification", &config.notification);
+        ImGui::SetCursorPos(ImVec2(900, 470));
+        ImGui::Checkbox("Play audio", &config.play_sound);
+        ImGui::SetCursorPos(ImVec2(900, 510));
+        ImGui::Checkbox("Temperature overlay", &config.overlay);
+        
+        //ImGui::PushStyleColor(ImGuiCol_Text, (config.max_value_temp > config.current_value_temp ? Colors::red : Colors::white));
+        
+        ImGui::PushFont(font_big);
+        ImGui::SetCursorPos(ImVec2(950, 70));
+        ImGui::PushStyleColor(ImGuiCol_Text, Colors::white);
+        ImGui::Text("%s", config.current_value_temp.c_str());
+        ImGui::SetWindowFontScale(0.6f);
+        ImGui::PopStyleColor();
+        ImGui::PopFont();
 
         ImGui::End();
         ImGui::Render();
