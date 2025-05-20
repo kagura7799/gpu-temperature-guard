@@ -13,7 +13,23 @@
             "hidden": false,
             "generator": "Visual Studio 17 2022",
             "description": "Debug build using Visual Studio 2022",
-            "binaryDir": "${sourceDir}/build"
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_TOOLCHAIN_FILE": "C:/devtools/vcpkg-master/scripts/buildsystems/vcpkg.cmake"
+            }
+        },
+
+        {
+            "name": "release-preset",
+            "hidden": false,
+            "generator": "Visual Studio 17 2022",
+            "description": "Release build using Visual Studio 2022",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_TOOLCHAIN_FILE": "C:/devtools/vcpkg-master/scripts/buildsystems/vcpkg.cmake"
+            }
         }
     ],
 
@@ -22,6 +38,13 @@
             "name": "debug-preset",
             "configurePreset": "debug-preset",
             "configuration": "Debug",
+            "targets": [ "gpu-temperature-guard" ]
+        },
+
+        {
+            "name": "release-preset",
+            "configurePreset": "release-preset",
+            "configuration": "Release",
             "targets": [ "gpu-temperature-guard" ]
         }
     ]
